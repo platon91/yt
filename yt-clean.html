@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Чистый YT">
+<meta name="theme-color" content="#0f0f0f">
+<title>Чистый YT</title>
+<style>
+:root{--bg:#fff;--fg:#0f0f0f;--mut:#606060;--card:#f2f2f2;--acc:#ff0033}
+@media(prefers-color-scheme:dark){:root{--bg:#0f0f0f;--fg:#f1f1f1;--mut:#aaa;--card:#272727}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px -apple-system,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(64px + env(safe-area-inset-bottom))}
+main{max-width:720px;margin:0 auto;padding:12px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--bg);border-top:1px solid var(--card);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;padding:14px 0;border:0;background:none;color:var(--mut);font-size:15px}
+nav button.on{color:var(--acc);font-weight:600}
+.v{display:block;margin-bottom:18px}
+.v img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:var(--card);display:block}
+.v b{display:block;margin-top:8px;font-weight:600;line-height:1.3}
+.v small{color:var(--mut)}
+.t{position:relative}
+.t i{position:absolute;right:6px;bottom:6px;background:#000c;color:#fff;font-size:12px;padding:2px 6px;border-radius:4px;font-style:normal}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--card);background:var(--card);color:var(--fg);font:inherit;margin:6px 0 12px}
+button.b{background:var(--acc);color:#fff;border:0;padding:12px 18px;border-radius:10px;font:inherit;font-weight:600}
+.row{display:flex;gap:8px}.row input{margin-bottom:12px}
+p.m{color:var(--mut);font-size:14px;line-height:1.4}
+#pl{position:fixed;inset:0;background:#000;z-index:9;display:none;flex-direction:column;padding-top:env(safe-area-inset-top)}
+#pl.on{display:flex}
+#pl .x{align-self:flex-end;color:#fff;background:none;border:0;font-size:17px;padding:14px}
+#pl iframe{width:100%;aspect-ratio:16/9;border:0}
+#pl .i{color:#fff;padding:12px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+  <section id="feed"></section>
+  <section id="search" class="hide">
+    <div class="row"><input id="q" type="search" placeholder="Поиск видео" enterkeyhint="search"><button class="b" id="go" style="height:46px">Найти</button></div>
+    <select id="dur"><option value="medium">4–20 минут</option><option value="long">Больше 20 минут</option></select>
+    <div id="res"></div>
+  </section>
+  <section id="set" class="hide">
+    <label>API-ключ YouTube Data API v3</label>
+    <input id="key" type="password" autocomplete="off" placeholder="AIza...">
+    <label>Каналы (по одному в строке, например @mkbhd)</label>
+    <textarea id="chs" rows="7" placeholder="@mkbhd&#10;@veritasium"></textarea>
+    <label>Минимальная длина видео, секунд (Shorts — до 180)</label>
+    <input id="min" type="number" value="181">
+    <label style="display:flex;gap:10px;align-items:center;margin-bottom:16px"><input id="en" type="checkbox" style="width:auto;margin:0"> Только англоязычные видео</label>
+    <button class="b" id="save">Сохранить</button>
+    <p class="m">Ключ и список каналов хранятся только на этом устройстве. Ключ создаётся бесплатно в Google Cloud Console: включите YouTube Data API v3 и создайте API key.</p>
+  </section>
+</main>
+<nav>
+  <button data-t="feed" class="on">Лента</button>
+  <button data-t="search">Поиск</button>
+  <button data-t="set">Настройки</button>
+</nav>
+<div id="pl"><button class="x" id="cl">Закрыть ✕</button><div id="fr"></div><div class="i" id="inf"></div></div>
+<script>
+const $=s=>document.querySelector(s);
+const L={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+ set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const API='https://www.googleapis.com/youtube/v3/';
+let cfg={key:L.get('key',''),chs:L.get('chs',[]),min:L.get('min',181),en:L.get('en',true)};
+
+async function api(path,params){
+  const u=new URL(API+path);
+  Object.entries({...params,key:cfg.key}).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u);
+  const j=await r.json();
+  if(!r.ok)throw new Error(j.error?.message||'Ошибка API');
+  return j;
+}
+function secs(d){const m=/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(d)||[];return (+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0)}
+function fmt(s){const h=Math.floor(s/3600),m=Math.floor(s%3600/60),c=s%60,p=n=>String(n).padStart(2,'0');return h?`${h}:${p(m)}:${p(c)}`:`${m}:${p(c)}`}
+function ago(d){const s=(Date.now()-new Date(d))/1000;const u=[[31536000,'г.'],[2592000,'мес.'],[86400,'дн.'],[3600,'ч.'],[60,'мин.']];for(const[n,l]of u)if(s>=n)return Math.floor(s/n)+' '+l+' назад';return 'только что'}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+async function details(ids){
+  const out=[];
+  for(let i=0;i<ids.length;i+=50){
+    const j=await api('videos',{part:'contentDetails,snippet',id:ids.slice(i,i+50).join(','),...(cfg.en?{hl:'en_US',regionCode:'US'}:{})});
+    out.push(...j.items);
+  }
+  return out.map(v=>({id:v.id,title:(cfg.en&&v.snippet.localized?.title)||v.snippet.title,ch:v.snippet.channelTitle,at:v.snippet.publishedAt,
+    th:(v.snippet.thumbnails.medium||v.snippet.thumbnails.default).url,s:secs(v.contentDetails.duration),
+    live:v.snippet.liveBroadcastContent!=='none',
+    lang:(v.snippet.defaultAudioLanguage||v.snippet.defaultLanguage||'').toLowerCase()}))
+    .filter(v=>v.s>=cfg.min&&!v.live&&(!cfg.en||isEn(v)));
+}
+function isEn(v){
+  if(v.lang)return v.lang.startsWith('en');
+  return !/[^\u0000-\u024F\u2000-\u206F\u2190-\u2BFF\u{1F000}-\u{1FFFF}]/u.test(v.title);
+}
+function render(el,list){
+  el.innerHTML=list.length?list.map(v=>`<a class="v" href="#" data-id="${v.id}" data-t="${esc(v.title)}">
+    <div class="t"><img loading="lazy" src="${v.th}" alt=""><i>${fmt(v.s)}</i></div>
+    <b>${esc(v.title)}</b><small>${esc(v.ch)} · ${ago(v.at)}</small></a>`).join(''):'<p class="m">Ничего не найдено.</p>';
+}
+function need(){
+  if(cfg.key)return false;
+  $('#feed').innerHTML='<p class="m">Сначала добавьте API-ключ и каналы во вкладке «Настройки».</p>';
+  return true;
+}
+async function loadFeed(force){
+  const el=$('#feed');
+  if(need())return;
+  if(!cfg.chs.length){el.innerHTML='<p class="m">Добавьте каналы во вкладке «Настройки».</p>';return}
+  const cache=L.get('feedCache',null);
+  if(!force&&cache&&Date.now()-cache.at<15*60e3){render(el,cache.list);return}
+  el.innerHTML='<p class="m">Загрузка…</p>';
+  try{
+    let ups=L.get('ups',{});
+    const ids=[];
+    for(const h of cfg.chs){
+      if(!ups[h]){
+        const j=await api('channels',{part:'contentDetails',forHandle:h});
+        if(!j.items?.length)continue;
+        ups[h]=j.items[0].contentDetails.relatedPlaylists.uploads;
+      }
+      const p=await api('playlistItems',{part:'contentDetails',playlistId:ups[h],maxResults:12});
+      p.items.forEach(i=>ids.push(i.contentDetails.videoId));
+    }
+    L.set('ups',ups);
+    const list=(await details([...new Set(ids)])).sort((a,b)=>new Date(b.at)-new Date(a.at));
+    L.set('feedCache',{at:Date.now(),list});
+    render(el,list);
+  }catch(e){el.innerHTML='<p class="m">Ошибка: '+esc(e.message)+'</p>'}
+}
+async function doSearch(){
+  const q=$('#q').value.trim();
+  if(!q||!cfg.key)return;
+  $('#res').innerHTML='<p class="m">Поиск…</p>';
+  try{
+    const j=await api('search',{part:'snippet',type:'video',q,maxResults:30,videoDuration:$('#dur').value,safeSearch:'none',...(cfg.en?{relevanceLanguage:'en',regionCode:'US'}:{})});
+    render($('#res'),await details(j.items.map(i=>i.id.videoId)));
+  }catch(e){$('#res').innerHTML='<p class="m">Ошибка: '+esc(e.message)+'</p>'}
+}
+function play(id,t){
+  $('#fr').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0${cfg.en?'&hl=en&cc_lang_pref=en':''}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+  $('#inf').textContent=t;$('#pl').classList.add('on');
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a.v');
+  if(a){e.preventDefault();play(a.dataset.id,a.dataset.t)}
+});
+$('#cl').onclick=()=>{$('#pl').classList.remove('on');$('#fr').innerHTML=''};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  ['feed','search','set'].forEach(t=>$('#'+t).classList.toggle('hide',t!==b.dataset.t));
+  if(b.dataset.t==='feed')loadFeed();
+});
+$('#go').onclick=doSearch;
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+$('#save').onclick=()=>{
+  cfg.key=$('#key').value.trim();
+  cfg.chs=$('#chs').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>s.startsWith('@')?s:'@'+s);
+  cfg.min=+$('#min').value||181;
+  cfg.en=$('#en').checked;L.set('en',cfg.en);
+  L.set('key',cfg.key);L.set('chs',cfg.chs);L.set('min',cfg.min);L.set('ups',{});L.set('feedCache',null);
+  document.querySelector('nav button[data-t=feed]').click();loadFeed(true);
+};
+$('#key').value=cfg.key;$('#chs').value=cfg.chs.join('\n');$('#min').value=cfg.min;$('#en').checked=cfg.en;
+loadFeed();
+</script>
+</body>
+</html>
