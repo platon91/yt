@@ -5,69 +5,102 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Чистый YT">
+<meta name="apple-mobile-web-app-title" content="Clean">
 <meta name="theme-color" content="#0f0f0f">
-<title>Чистый YT</title>
+<title>Clean</title>
 <style>
-:root{--bg:#fff;--fg:#0f0f0f;--mut:#606060;--card:#f2f2f2;--acc:#ff0033}
-@media(prefers-color-scheme:dark){:root{--bg:#0f0f0f;--fg:#f1f1f1;--mut:#aaa;--card:#272727}}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--fg);font:16px -apple-system,system-ui,sans-serif}
-body{padding:env(safe-area-inset-top) 0 calc(64px + env(safe-area-inset-bottom))}
-main{max-width:720px;margin:0 auto;padding:12px}
-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--bg);border-top:1px solid var(--card);padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;padding:14px 0;border:0;background:none;color:var(--mut);font-size:15px}
-nav button.on{color:var(--acc);font-weight:600}
-.v{display:block;margin-bottom:18px}
-.v img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:var(--card);display:block}
-.v b{display:block;margin-top:8px;font-weight:600;line-height:1.3}
-.v small{color:var(--mut)}
-.t{position:relative}
-.t i{position:absolute;right:6px;bottom:6px;background:#000c;color:#fff;font-size:12px;padding:2px 6px;border-radius:4px;font-style:normal}
-input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--card);background:var(--card);color:var(--fg);font:inherit;margin:6px 0 12px}
-button.b{background:var(--acc);color:#fff;border:0;padding:12px 18px;border-radius:10px;font:inherit;font-weight:600}
-.row{display:flex;gap:8px}.row input{margin-bottom:12px}
-p.m{color:var(--mut);font-size:14px;line-height:1.4}
-#pl{position:fixed;inset:0;background:#000;z-index:9;display:none;flex-direction:column;padding-top:env(safe-area-inset-top)}
-#pl.on{display:flex}
-#pl .x{align-self:flex-end;color:#fff;background:none;border:0;font-size:17px;padding:14px}
-#pl iframe{width:100%;aspect-ratio:16/9;border:0}
-#pl .i{color:#fff;padding:12px}
-.hide{display:none}
+:root{--bg:#fff;--fg:#0f0f0f;--mut:#606060;--chip:#f2f2f2;--sel:#0f0f0f;--selt:#fff;--line:#e5e5e5;--red:#f03}
+@media(prefers-color-scheme:dark){:root{--bg:#0f0f0f;--fg:#f1f1f1;--mut:#aaa;--chip:#272727;--sel:#f1f1f1;--selt:#0f0f0f;--line:#272727}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.35 Roboto,-apple-system,system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding-top:env(safe-area-inset-top)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 6px 0 12px}
+.logo{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:700;letter-spacing:-.5px}
+.logo i{width:30px;height:21px;background:var(--red);border-radius:6px;display:grid;place-items:center}
+.logo i:after{content:"";border-left:8px solid #fff;border-top:5px solid transparent;border-bottom:5px solid transparent;margin-left:2px}
+.ic{background:none;border:0;color:var(--fg);width:44px;height:44px}
+svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 12px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:7px 12px;border-radius:8px;background:var(--chip);color:var(--fg);border:0;font-size:14px;font-weight:500;font-family:inherit;white-space:nowrap}
+.chip.on{background:var(--sel);color:var(--selt)}
+.v{display:block;margin-bottom:22px}
+.t{position:relative;aspect-ratio:16/9;background:var(--chip)}
+.t img{width:100%;height:100%;object-fit:cover;display:block}
+.t i{position:absolute;right:8px;bottom:8px;background:#000c;color:#fff;font-size:12px;font-weight:500;padding:3px 4px;border-radius:4px;font-style:normal}
+.meta{display:flex;gap:12px;padding:12px 12px 0}
+.av{flex:none;width:36px;height:36px;border-radius:50%;background:var(--chip) center/cover;display:grid;place-items:center;font-weight:600;color:var(--mut)}
+.tt{font-size:15px;font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mt{color:var(--mut);font-size:12.5px;margin-top:3px}
+.note{color:var(--mut);padding:12px;line-height:1.45}
+.sb{display:flex;gap:8px;padding:4px 12px 10px}
+.sb input{flex:1;height:40px;border-radius:20px;border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:0 16px;font-size:16px;font-family:inherit}
+.red{background:var(--red);color:#fff;border:0;border-radius:20px;padding:0 18px;height:40px;font-size:14px;font-weight:500}
+.pad{padding:8px 16px}
+.pad label{display:block;font-weight:600;margin-top:14px}
+.f{width:100%;padding:12px;margin-top:6px;border-radius:12px;border:1px solid var(--line);background:var(--chip);color:var(--fg);font-size:16px;font-family:inherit}
+.ck{display:flex;gap:10px;align-items:center}
+.ck input{width:20px;height:20px;margin:0}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 6px;background:none;border:0;color:var(--mut);font-size:10px;font-family:inherit}
+nav button.on{color:var(--fg);font-weight:600}
+nav button.on svg{stroke-width:2.6}
+#pl{position:fixed;inset:0;background:var(--bg);z-index:9;display:none;overflow:auto;padding-top:env(safe-area-inset-top)}
+#pl.on{display:block}
+#pl iframe{width:100%;aspect-ratio:16/9;border:0;display:block;background:#000}
+#fr{background:#000;min-height:0}
+#pt{font-size:18px;font-weight:600;line-height:1.3;padding:12px 12px 4px}
+#pc{color:var(--mut);padding:0 12px}
+.hide{display:none!important}
 </style>
 </head>
 <body>
+<header>
+  <div class="bar">
+    <div class="logo"><i></i>Clean</div>
+    <button class="ic" id="rf" aria-label="Обновить"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button>
+  </div>
+  <div class="chips" id="chips"></div>
+</header>
 <main>
   <section id="feed"></section>
   <section id="search" class="hide">
-    <div class="row"><input id="q" type="search" placeholder="Поиск видео" enterkeyhint="search"><button class="b" id="go" style="height:46px">Найти</button></div>
-    <select id="dur"><option value="medium">4–20 минут</option><option value="long">Больше 20 минут</option></select>
+    <div class="sb"><input id="q" type="search" placeholder="Поиск" enterkeyhint="search"><button class="red" id="go">Найти</button></div>
+    <div class="chips" id="dchips"><button class="chip on" data-d="medium">4–20 минут</button><button class="chip" data-d="long">Больше 20 минут</button></div>
     <div id="res"></div>
   </section>
-  <section id="set" class="hide">
+  <section id="set" class="hide pad">
     <label>API-ключ YouTube Data API v3</label>
-    <input id="key" type="password" autocomplete="off" placeholder="AIza...">
+    <input class="f" id="key" type="password" autocomplete="off" placeholder="AIza...">
     <label>Каналы (по одному в строке, например @mkbhd)</label>
-    <textarea id="chs" rows="7" placeholder="@mkbhd&#10;@veritasium"></textarea>
-    <label>Минимальная длина видео, секунд (Shorts — до 180)</label>
-    <input id="min" type="number" value="181">
-    <label style="display:flex;gap:10px;align-items:center;margin-bottom:16px"><input id="en" type="checkbox" style="width:auto;margin:0"> Только англоязычные видео</label>
-    <button class="b" id="save">Сохранить</button>
-    <p class="m">Ключ и список каналов хранятся только на этом устройстве. Ключ создаётся бесплатно в Google Cloud Console: включите YouTube Data API v3 и создайте API key.</p>
+    <textarea class="f" id="chs" rows="7" placeholder="@veritasium&#10;@kurzgesagt"></textarea>
+    <label>Минимальная длина видео, секунд</label>
+    <input class="f" id="min" type="number" value="181">
+    <label class="ck" style="margin:16px 0"><input id="en" type="checkbox"> Только англоязычные видео</label>
+    <button class="red" id="save">Сохранить</button>
+    <p class="note" style="padding:12px 0">Ключ и список каналов хранятся только на этом устройстве.</p>
   </section>
 </main>
 <nav>
-  <button data-t="feed" class="on">Лента</button>
-  <button data-t="search">Поиск</button>
-  <button data-t="set">Настройки</button>
+  <button data-t="feed" class="on"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></svg>Главная</button>
+  <button data-t="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>Поиск</button>
+  <button data-t="set"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1-4 4-6 8-6s7 2 8 6"/></svg>Вы</button>
 </nav>
-<div id="pl"><button class="x" id="cl">Закрыть ✕</button><div id="fr"></div><div class="i" id="inf"></div></div>
+<div id="pl">
+  <button class="ic" id="cl" aria-label="Назад"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div id="fr"></div>
+  <div id="pt"></div>
+  <div id="pc"></div>
+</div>
 <script>
 const $=s=>document.querySelector(s);
 const L={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const API='https://www.googleapis.com/youtube/v3/';
 let cfg={key:L.get('key',''),chs:L.get('chs',[]),min:L.get('min',181),en:L.get('en',true)};
+let av=L.get('av',{}),feedList=[],chan='',dur='medium';
 
 async function api(path,params){
   const u=new URL(API+path);
@@ -79,44 +112,83 @@ async function api(path,params){
 }
 function secs(d){const m=/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/.exec(d)||[];return (+m[1]||0)*3600+(+m[2]||0)*60+(+m[3]||0)}
 function fmt(s){const h=Math.floor(s/3600),m=Math.floor(s%3600/60),c=s%60,p=n=>String(n).padStart(2,'0');return h?`${h}:${p(m)}:${p(c)}`:`${m}:${p(c)}`}
-function ago(d){const s=(Date.now()-new Date(d))/1000;const u=[[31536000,'г.'],[2592000,'мес.'],[86400,'дн.'],[3600,'ч.'],[60,'мин.']];for(const[n,l]of u)if(s>=n)return Math.floor(s/n)+' '+l+' назад';return 'только что'}
+function ago(d){const s=(Date.now()-new Date(d))/1000;for(const[n,l]of [[31536000,'г.'],[2592000,'мес.'],[86400,'дн.'],[3600,'ч.'],[60,'мин.']])if(s>=n)return Math.floor(s/n)+' '+l+' назад';return 'только что'}
+function views(n){if(!n)return '';if(n>=1e6)return (n/1e6).toFixed(1).replace('.',',')+' млн просмотров';if(n>=1e3)return Math.round(n/1e3)+' тыс. просмотров';return n+' просмотров'}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-
-async function details(ids){
-  const out=[];
-  for(let i=0;i<ids.length;i+=50){
-    const j=await api('videos',{part:'contentDetails,snippet',id:ids.slice(i,i+50).join(','),...(cfg.en?{hl:'en_US',regionCode:'US'}:{})});
-    out.push(...j.items);
-  }
-  return out.map(v=>({id:v.id,title:(cfg.en&&v.snippet.localized?.title)||v.snippet.title,ch:v.snippet.channelTitle,at:v.snippet.publishedAt,
-    th:(v.snippet.thumbnails.medium||v.snippet.thumbnails.default).url,s:secs(v.contentDetails.duration),
-    live:v.snippet.liveBroadcastContent!=='none',
-    lang:(v.snippet.defaultAudioLanguage||v.snippet.defaultLanguage||'').toLowerCase()}))
-    .filter(v=>v.s>=cfg.min&&!v.live&&(!cfg.en||isEn(v)));
-}
 function isEn(v){
   if(v.lang)return v.lang.startsWith('en');
   return !/[^\u0000-\u024F\u2000-\u206F\u2190-\u2BFF\u{1F000}-\u{1FFFF}]/u.test(v.title);
 }
-function render(el,list){
-  el.innerHTML=list.length?list.map(v=>`<a class="v" href="#" data-id="${v.id}" data-t="${esc(v.title)}">
-    <div class="t"><img loading="lazy" src="${v.th}" alt=""><i>${fmt(v.s)}</i></div>
-    <b>${esc(v.title)}</b><small>${esc(v.ch)} · ${ago(v.at)}</small></a>`).join(''):'<p class="m">Ничего не найдено.</p>';
+async function avatars(list){
+  const need=[...new Set(list.map(v=>v.cid))].filter(c=>!av[c]);
+  for(let i=0;i<need.length;i+=50){
+    try{const j=await api('channels',{part:'snippet',id:need.slice(i,i+50).join(',')});
+      j.items.forEach(c=>av[c.id]=c.snippet.thumbnails.default.url)}catch(e){}
+  }
+  if(need.length)L.set('av',av);
 }
-function need(){
-  if(cfg.key)return false;
-  $('#feed').innerHTML='<p class="m">Сначала добавьте API-ключ и каналы во вкладке «Настройки».</p>';
-  return true;
+async function details(ids){
+  const out=[];
+  for(let i=0;i<ids.length;i+=50){
+    const j=await api('videos',{part:'contentDetails,snippet,statistics',id:ids.slice(i,i+50).join(','),...(cfg.en?{hl:'en_US',regionCode:'US'}:{})});
+    out.push(...j.items);
+  }
+  const list=out.map(v=>({id:v.id,title:(cfg.en&&v.snippet.localized?.title)||v.snippet.title,ch:v.snippet.channelTitle,
+    cid:v.snippet.channelId,at:v.snippet.publishedAt,th:(v.snippet.thumbnails.medium||v.snippet.thumbnails.default).url,
+    s:secs(v.contentDetails.duration),vw:+(v.statistics?.viewCount||0),
+    live:v.snippet.liveBroadcastContent!=='none',
+    lang:(v.snippet.defaultAudioLanguage||v.snippet.defaultLanguage||'').toLowerCase()}))
+    .filter(v=>v.s>=cfg.min&&!v.live&&(!cfg.en||isEn(v)));
+  await avatars(list);
+  return list;
+}
+function card(v){
+  const a=av[v.cid];
+  const mt=[esc(v.ch),views(v.vw),ago(v.at)].filter(Boolean).join(' · ');
+  return `<a class="v" href="#" data-id="${v.id}" data-t="${esc(v.title)}" data-c="${esc(v.ch)}">
+    <div class="t"><img loading="lazy" src="${v.th}" alt=""><i>${fmt(v.s)}</i></div>
+    <div class="meta"><div class="av"${a?` style="background-image:url(${a})"`:''}>${a?'':esc((v.ch||'?')[0])}</div>
+    <div><div class="tt">${esc(v.title)}</div><div class="mt">${mt}</div></div></div></a>`;
+}
+const io=new IntersectionObserver(es=>es.forEach(async e=>{
+  if(!e.isIntersecting)return;
+  io.unobserve(e.target);
+  const el=e.target.parentElement;
+  for(let k=0;k<5&&el._n>=el._l.length&&el._more&&!el._done;k++){
+    try{el._l.push(...await el._more())}catch(x){el._done=true}
+  }
+  fill(el);
+}),{rootMargin:'800px'});
+function fill(el){
+  el.querySelector('.sen')?.remove();
+  const next=el._l.slice(el._n,el._n+15);
+  el._n+=next.length;
+  el.insertAdjacentHTML('beforeend',next.map(card).join(''));
+  if(el._n<el._l.length||(el._more&&!el._done)){
+    el.insertAdjacentHTML('beforeend','<div class="sen note" style="text-align:center">Загрузка…</div>');
+    io.observe(el.querySelector('.sen'));
+  }
+}
+function render(el,list,more){
+  el._l=list;el._n=0;el._more=more||null;
+  el.innerHTML='';
+  if(!list.length&&!more){el.innerHTML='<p class="note">Ничего не найдено.</p>';return}
+  fill(el);
+}
+function showFeed(){
+  const names=[...new Set(feedList.map(v=>v.ch))];
+  $('#chips').innerHTML=['Все',...names].map(n=>`<button class="chip${(n==='Все'?!chan:n===chan)?' on':''}" data-n="${esc(n)}">${esc(n)}</button>`).join('');
+  render($('#feed'),chan?feedList.filter(v=>v.ch===chan):feedList);
 }
 async function loadFeed(force){
   const el=$('#feed');
-  if(need())return;
-  if(!cfg.chs.length){el.innerHTML='<p class="m">Добавьте каналы во вкладке «Настройки».</p>';return}
-  const cache=L.get('feedCache',null);
-  if(!force&&cache&&Date.now()-cache.at<15*60e3){render(el,cache.list);return}
-  el.innerHTML='<p class="m">Загрузка…</p>';
+  if(!cfg.key){el.innerHTML='<p class="note">Сначала добавьте API-ключ и каналы во вкладке «Вы».</p>';return}
+  if(!cfg.chs.length){el.innerHTML='<p class="note">Добавьте каналы во вкладке «Вы».</p>';return}
+  const cache=L.get('feed2',null);
+  if(!force&&cache&&Date.now()-cache.at<15*60e3){feedList=cache.list;showFeed();return}
+  el.innerHTML='<p class="note">Загрузка…</p>';
   try{
-    let ups=L.get('ups',{});
+    const ups=L.get('ups',{});
     const ids=[];
     for(const h of cfg.chs){
       if(!ups[h]){
@@ -124,47 +196,67 @@ async function loadFeed(force){
         if(!j.items?.length)continue;
         ups[h]=j.items[0].contentDetails.relatedPlaylists.uploads;
       }
-      const p=await api('playlistItems',{part:'contentDetails',playlistId:ups[h],maxResults:12});
+      const p=await api('playlistItems',{part:'contentDetails',playlistId:ups[h],maxResults:50});
       p.items.forEach(i=>ids.push(i.contentDetails.videoId));
     }
     L.set('ups',ups);
-    const list=(await details([...new Set(ids)])).sort((a,b)=>new Date(b.at)-new Date(a.at));
-    L.set('feedCache',{at:Date.now(),list});
-    render(el,list);
-  }catch(e){el.innerHTML='<p class="m">Ошибка: '+esc(e.message)+'</p>'}
+    feedList=(await details([...new Set(ids)])).sort((a,b)=>new Date(b.at)-new Date(a.at));
+    chan='';
+    L.set('feed2',{at:Date.now(),list:feedList});
+    showFeed();
+  }catch(e){el.innerHTML='<p class="note">Ошибка: '+esc(e.message)+'</p>'}
 }
 async function doSearch(){
   const q=$('#q').value.trim();
   if(!q||!cfg.key)return;
-  $('#res').innerHTML='<p class="m">Поиск…</p>';
-  try{
-    const j=await api('search',{part:'snippet',type:'video',q,maxResults:30,videoDuration:$('#dur').value,safeSearch:'none',...(cfg.en?{relevanceLanguage:'en',regionCode:'US'}:{})});
-    render($('#res'),await details(j.items.map(i=>i.id.videoId)));
-  }catch(e){$('#res').innerHTML='<p class="m">Ошибка: '+esc(e.message)+'</p>'}
+  const el=$('#res');
+  el.innerHTML='<p class="note">Поиск…</p>';
+  let tok='';el._done=false;
+  const page=async()=>{
+    const j=await api('search',{part:'snippet',type:'video',q,maxResults:50,videoDuration:dur,safeSearch:'none',...(tok?{pageToken:tok}:{}),...(cfg.en?{relevanceLanguage:'en',regionCode:'US'}:{})});
+    tok=j.nextPageToken||'';
+    if(!tok)el._done=true;
+    return j.items.length?details(j.items.map(i=>i.id.videoId)):[];
+  };
+  try{render(el,await page(),page)}
+  catch(e){el.innerHTML='<p class="note">Ошибка: '+esc(e.message)+'</p>'}
 }
-function play(id,t){
+function play(id,t,c){
   $('#fr').innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0${cfg.en?'&hl=en&cc_lang_pref=en':''}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
-  $('#inf').textContent=t;$('#pl').classList.add('on');
+  $('#pt').textContent=t;$('#pc').textContent=c;
+  $('#pl').classList.add('on');
+}
+function show(t){
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.t===t));
+  ['feed','search','set'].forEach(s=>$('#'+s).classList.toggle('hide',s!==t));
+  $('#chips').classList.toggle('hide',t!=='feed');
+  if(t==='feed'&&!feedList.length)loadFeed();
+  scrollTo(0,0);
 }
 document.addEventListener('click',e=>{
   const a=e.target.closest('a.v');
-  if(a){e.preventDefault();play(a.dataset.id,a.dataset.t)}
+  if(a){e.preventDefault();play(a.dataset.id,a.dataset.t,a.dataset.c)}
 });
+$('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;chan=b.dataset.n==='Все'?'':b.dataset.n;showFeed();scrollTo(0,0)};
+$('#dchips').onclick=e=>{
+  const b=e.target.closest('.chip');if(!b)return;
+  dur=b.dataset.d;
+  document.querySelectorAll('#dchips .chip').forEach(x=>x.classList.toggle('on',x===b));
+  doSearch();
+};
 $('#cl').onclick=()=>{$('#pl').classList.remove('on');$('#fr').innerHTML=''};
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
-  ['feed','search','set'].forEach(t=>$('#'+t).classList.toggle('hide',t!==b.dataset.t));
-  if(b.dataset.t==='feed')loadFeed();
-});
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+$('#rf').onclick=()=>{show('feed');loadFeed(true)};
 $('#go').onclick=doSearch;
 $('#q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
 $('#save').onclick=()=>{
   cfg.key=$('#key').value.trim();
   cfg.chs=$('#chs').value.split('\n').map(s=>s.trim()).filter(Boolean).map(s=>s.startsWith('@')?s:'@'+s);
   cfg.min=+$('#min').value||181;
-  cfg.en=$('#en').checked;L.set('en',cfg.en);
-  L.set('key',cfg.key);L.set('chs',cfg.chs);L.set('min',cfg.min);L.set('ups',{});L.set('feedCache',null);
-  document.querySelector('nav button[data-t=feed]').click();loadFeed(true);
+  cfg.en=$('#en').checked;
+  L.set('key',cfg.key);L.set('chs',cfg.chs);L.set('min',cfg.min);L.set('en',cfg.en);
+  L.set('ups',{});L.set('feed2',null);feedList=[];
+  show('feed');loadFeed(true);
 };
 $('#key').value=cfg.key;$('#chs').value=cfg.chs.join('\n');$('#min').value=cfg.min;$('#en').checked=cfg.en;
 loadFeed();
